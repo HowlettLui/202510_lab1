@@ -1,5 +1,5 @@
-# 使用輕量級的 Nginx Alpine 映像
-FROM nginx:alpine
+# 使用穩定版的 Nginx Alpine 映像
+FROM nginx:stable-alpine
 
 # 維護者資訊
 LABEL org.opencontainers.image.source="https://github.com/YOUR_USERNAME/YOUR_REPO"
@@ -22,8 +22,21 @@ RUN sed -i 's/listen\s*80;/listen 8080;/g' /etc/nginx/conf.d/default.conf && \
     sed -i 's,/var/run/nginx.pid,/tmp/nginx.pid,' /etc/nginx/nginx.conf && \
     sed -i "/^http {/a \    proxy_temp_path /tmp/proxy_temp;\n    client_body_temp_path /tmp/client_temp;\n    fastcgi_temp_path /tmp/fastcgi_temp;\n    uwsgi_temp_path /tmp/uwsgi_temp;\n    scgi_temp_path /tmp/scgi_temp;\n" /etc/nginx/nginx.conf
 
+# 創建非 root 用戶
+RUN adduser -D -H -u 1000 -s /sbin/nologin nginx_user
+
+# 設置必要的目錄權限
+RUN chown -R nginx_user:nginx_user /var/cache/nginx && \
+    chown -R nginx_user:nginx_user /var/log/nginx && \
+    chown -R nginx_user:nginx_user /etc/nginx/conf.d && \
+    touch /var/run/nginx.pid && \
+    chown -R nginx_user:nginx_user /var/run/nginx.pid
+
+# 使用非 root 用戶
+USER nginx_user
+
 # 暴露 8080 端口（非特權端口）
 EXPOSE 8080
 
-# 啟動 Nginx
+# 使用 exec form 的 CMD
 CMD ["nginx", "-g", "daemon off;"]
