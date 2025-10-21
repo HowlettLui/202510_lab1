@@ -1,5 +1,5 @@
 # 使用穩定版的 Nginx Alpine 映像
-FROM nginx:stable-alpine
+FROM nginx:-alpine
 
 # 維護者資訊
 LABEL org.opencontainers.image.source="https://github.com/YOUR_USERNAME/YOUR_REPO"
