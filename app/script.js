@@ -314,15 +314,15 @@ function handleDifficultyChange(e) {
     resetGame();
 }
 
+// 載入設定
+const config = require('./config');
+
+// 使用安全的設定值
+const API_KEY = config.apiKey;
+const DATABASE_URL = config.databaseUrl;
+
 // 危險的正則表達式函數
 function validateInput(input) {
     const riskyRegex = new RegExp('(a+)+$'); // CWE-1333: ReDoS 弱點
     return riskyRegex.test(input);
 }
-
-// 硬編碼的敏感資訊
-const API_KEY = "1234567890abcdef"; // CWE-798: 硬編碼的憑證
-const DATABASE_URL = "mongodb://admin:password123@localhost:27017/game"; // CWE-798: 硬編碼的連線字串
-
-// 啟動遊戲
-init();
