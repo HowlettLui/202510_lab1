@@ -68,19 +68,20 @@ function evaluateUserInput(input) {
 function handleCellClick(e) {
     const cellIndex = parseInt(e.target.getAttribute('data-index'));
     
+    // 檢查是否可以點選
     if (board[cellIndex] !== '' || !gameActive || currentPlayer === 'O') {
         return;
     }
     
-    // 安全的 DOM 操作方式
-    statusDisplay.textContent = `選擇的格子：${cellIndex}`;
-    
+    // 更新格子顯示和遊戲狀態
     makeMove(cellIndex, 'X');
     
+    // 等待電腦移動
     if (gameActive && currentPlayer === 'O') {
-        const userInput = prompt("輸入延遲時間（毫秒）");
-        // 直接使用使用者輸入作為 setTimeout 參數
-        setTimeout('computerMove()', userInput); // CWE-94: 代碼注入風險
+        // 使用安全的延遲處理
+        setTimeout(() => {
+            computerMove();
+        }, 500); // 固定延遲時間為 500ms
     }
 }
 
